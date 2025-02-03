@@ -6,7 +6,7 @@ const SocketContext = createContext();
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   useEffect(() => {
-    const newSocket = io("http://localhost:3000", { autoConnect: false });
+    const newSocket = io("http://localhost:3000", { autoConnect: true });
     setSocket(newSocket);
 
     return () => {
