@@ -1,6 +1,7 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { useSocket } from "./useSocket";
+import MySudokuBoard from "./MySudokuBoard";
 
 const Room = () => {
   const roomId = useParams().roomId;
@@ -17,7 +18,6 @@ const Room = () => {
 
   useEffect(() => {
     const onReadyEvent = (readyStatus) => {
-      console.log("Received status", readyStatus);
       setOpponentReady(readyStatus);
     };
     socket.on("ready", onReadyEvent);
@@ -29,10 +29,11 @@ const Room = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center h-full">
+      <div className="flex flex-col justify-center items-center h-full">
         <h1 className="text-3xl">Room: {roomId}</h1>
         <div>
-          <p>{nickname}</p>
+          <p className="font-medium">{nickname}</p>
+          <MySudokuBoard />
         </div>
       </div>
 
