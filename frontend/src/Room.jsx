@@ -2,6 +2,7 @@ import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { useSocket } from "./useSocket";
 import MySudokuBoard from "./MySudokuBoard";
+import OpponentSudokuBoard from "./OpponentSudokuBoard";
 
 const Room = () => {
   const roomId = useParams().roomId;
@@ -31,9 +32,17 @@ const Room = () => {
     <>
       <div className="flex flex-col justify-center items-center h-full">
         <h1 className="text-3xl">Room: {roomId}</h1>
-        <div>
-          <p className="font-medium">{nickname}</p>
-          <MySudokuBoard />
+        <div className="flex gap-24">
+          <div className="flex flex-col">
+            <div>
+              <p className="font-medium">{nickname}</p>
+              <MySudokuBoard roomId={roomId} />
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <p className="font-medium">Nickname</p>
+            <OpponentSudokuBoard roomId={roomId} />
+          </div>
         </div>
       </div>
 

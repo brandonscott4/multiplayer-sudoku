@@ -25,6 +25,16 @@ io.on("connection", (socket) => {
   socket.on("ready", (data) => {
     socket.to(data.roomId).emit("ready", data.readyStatus);
   });
+
+  socket.on("valid-move", (data) => {
+    socket
+      .to(data.roomId)
+      .emit("valid-move", { rowIndex: data.rowIndex, colIndex: data.colIndex });
+  });
+
+  socket.on("lose-life", (data) => {
+    socket.to(data.roomId).emit("lose-life");
+  });
 });
 
 server.listen(3000, () => {

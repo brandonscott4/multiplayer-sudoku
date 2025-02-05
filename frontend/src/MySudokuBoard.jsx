@@ -1,7 +1,8 @@
 import { useState } from "react";
 import NumberSelection from "./NumberSelection";
+import { useSocket } from "./useSocket";
 
-const MySudokuBoard = () => {
+const MySudokuBoard = ({ roomId }) => {
   const initialSudokuBoard = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
     [6, 0, 0, 1, 9, 5, 0, 0, 0],
@@ -32,6 +33,7 @@ const MySudokuBoard = () => {
     colIndex: 0,
   });
   const [lives, setLives] = useState(3);
+  const socket = useSocket();
 
   const handleClick = (rowIndex, colIndex) => {
     setActiveCell({ rowIndex, colIndex });
@@ -53,6 +55,7 @@ const MySudokuBoard = () => {
       }
 
       setLives(lives - 1);
+      socket.emit("lose-life", { roomId: roomId });
       return;
     }
 
@@ -60,6 +63,12 @@ const MySudokuBoard = () => {
     let newBoard = [...board];
     newBoard[activeCell.rowIndex][activeCell.colIndex] = num;
     setBoard(newBoard);
+
+    socket.emit("valid-move", {
+      rowIndex: activeCell.rowIndex,
+      colIndex: activeCell.colIndex,
+      roomId: roomId,
+    });
   };
 
   return (
