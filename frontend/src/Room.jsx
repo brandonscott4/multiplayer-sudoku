@@ -8,6 +8,7 @@ const Room = () => {
   const roomId = useParams().roomId;
   const nickname = localStorage.getItem("nickname");
   const [ready, setReady] = useState(false);
+  const [hasOpponent, setHasOpponent] = useState(false);
   const [opponentReady, setOpponentReady] = useState(false);
   const socket = useSocket();
 
@@ -23,8 +24,15 @@ const Room = () => {
     };
     socket.on("ready", onReadyEvent);
 
+    const onOpponentJoinedEvent = () => {
+      console.log("Opponent Joined!");
+      setHasOpponent(true);
+    };
+    socket.on("opponent-joined", onOpponentJoinedEvent);
+
     return () => {
       socket.off("ready", onReadyEvent);
+      socket.off("opponent-joined", onOpponentJoinedEvent);
     };
   }, [socket]);
 
@@ -52,14 +60,16 @@ const Room = () => {
             <p className="mb-8 text-2xl">
               {!opponentReady ? "Waiting for opponent..." : "Opponent ready!"}
             </p>
-            <button
-              className="border bg-green-100 w-32 px-3 py-1 hover:bg-green-200 hover:cursor-pointer rounded"
-              onClick={() => {
-                handleClick();
-              }}
-            >
-              {ready ? "Unready" : "Ready"}
-            </button>
+            {hasOpponent && (
+              <button
+                className="border bg-green-100 w-32 px-3 py-1 hover:bg-green-200 hover:cursor-pointer rounded"
+                onClick={() => {
+                  handleClick();
+                }}
+              >
+                {ready ? "Unready" : "Ready"}
+              </button>
+            )}
           </div>
         </div>
       )}
