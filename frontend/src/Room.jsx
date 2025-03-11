@@ -38,6 +38,12 @@ const Room = () => {
     };
     socket.on("opponent-loses", onOpponentLosesEvent);
 
+    const onOpponentWinsEvent = () => {
+      setIsGameOver(true);
+      alert("You Lose!");
+    };
+    socket.on("opponent-wins", onOpponentWinsEvent);
+
     return () => {
       socket.off("ready", onReadyEvent);
       socket.off("opponent-joined", onOpponentJoinedEvent);

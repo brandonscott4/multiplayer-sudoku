@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NumberSelection from "./NumberSelection";
 import { useSocket } from "./useSocket";
 
@@ -33,7 +33,22 @@ const MySudokuBoard = ({ roomId, isGameOver, setIsGameOver }) => {
     colIndex: 0,
   });
   const [lives, setLives] = useState(3);
+  const [correctCells, setCorrectCells] = useState(0);
   const socket = useSocket();
+
+  useEffect(() => {
+    let currCorrectCells = 0;
+
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        if (initialSudokuBoard[i][j] !== 0) {
+          currCorrectCells++;
+        }
+      }
+    }
+
+    setCorrectCells(currCorrectCells);
+  }, []);
 
   const handleClick = (rowIndex, colIndex) => {
     setActiveCell({ rowIndex, colIndex });
@@ -71,6 +86,16 @@ const MySudokuBoard = ({ roomId, isGameOver, setIsGameOver }) => {
       colIndex: activeCell.colIndex,
       roomId: roomId,
     });
+
+    let currCorrectCells = correctCells + 1;
+
+    if (currCorrectCells === 81) {
+      setIsGameOver(true);
+      alert("You win!");
+      socket.emit("opponent-wins", { roomId: roomId });
+    }
+
+    setCorrectCells((prevCorrectCells) => prevCorrectCells + 1);
   };
 
   return (
