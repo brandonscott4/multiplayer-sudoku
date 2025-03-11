@@ -27,7 +27,7 @@ const OpponentSudokuBoard = () => {
     socket.on("valid-move", onValidMoveEvent);
 
     const onLoseLifeEvent = () => {
-      setLives(lives - 1);
+      setLives((prevLives) => prevLives - 1);
     };
     socket.on("lose-life", onLoseLifeEvent);
 

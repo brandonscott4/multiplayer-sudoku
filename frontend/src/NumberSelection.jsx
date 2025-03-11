@@ -1,4 +1,4 @@
-const NumberSelection = ({ handleCheck }) => {
+const NumberSelection = ({ handleCheck, isGameOver }) => {
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   return (
@@ -6,6 +6,7 @@ const NumberSelection = ({ handleCheck }) => {
       {numbers.map((num) => (
         <button
           key={num}
+          disabled={isGameOver}
           className="bg-gray-200 hover:bg-gray-300 hover:cursor-pointer rounded"
           onClick={() => {
             handleCheck(num);

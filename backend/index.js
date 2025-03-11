@@ -84,6 +84,10 @@ io.on("connection", (socket) => {
   socket.on("lose-life", (data) => {
     socket.to(data.roomId).emit("lose-life");
   });
+
+  socket.on("opponent-loses", (data) => {
+    socket.to(data.roomId).emit("opponent-loses");
+  });
 });
 
 server.listen(3000, () => {

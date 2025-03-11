@@ -2,7 +2,7 @@ import { useState } from "react";
 import NumberSelection from "./NumberSelection";
 import { useSocket } from "./useSocket";
 
-const MySudokuBoard = ({ roomId }) => {
+const MySudokuBoard = ({ roomId, isGameOver, setIsGameOver }) => {
   const initialSudokuBoard = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
     [6, 0, 0, 1, 9, 5, 0, 0, 0],
@@ -49,9 +49,11 @@ const MySudokuBoard = ({ roomId }) => {
     if (num !== solution[activeCell.rowIndex][activeCell.colIndex]) {
       if (lives - 1 === 0) {
         setLives(lives - 1);
-        console.log("Game Over");
+        socket.emit("lose-life", { roomId: roomId });
+        setIsGameOver(true);
+        alert("You lost!");
+        socket.emit("opponent-loses", { roomId: roomId });
         return;
-        //TODO: handle game over
       }
 
       setLives(lives - 1);
@@ -103,7 +105,7 @@ const MySudokuBoard = ({ roomId }) => {
             )}
           </div>
         </div>
-        <NumberSelection handleCheck={handleCheck} />
+        <NumberSelection handleCheck={handleCheck} isGameOver={isGameOver} />
       </div>
     </>
   );

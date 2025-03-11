@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import { useSocket } from "./useSocket";
 import MySudokuBoard from "./MySudokuBoard";
@@ -10,7 +10,9 @@ const Room = () => {
   const [ready, setReady] = useState(false);
   const [hasOpponent, setHasOpponent] = useState(false);
   const [opponentReady, setOpponentReady] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
   const socket = useSocket();
+  const navigate = useNavigate();
 
   const handleClick = () => {
     const newReady = !ready;
@@ -30,9 +32,16 @@ const Room = () => {
     };
     socket.on("opponent-joined", onOpponentJoinedEvent);
 
+    const onOpponentLosesEvent = () => {
+      setIsGameOver(true);
+      alert("You Win!");
+    };
+    socket.on("opponent-loses", onOpponentLosesEvent);
+
     return () => {
       socket.off("ready", onReadyEvent);
       socket.off("opponent-joined", onOpponentJoinedEvent);
+      socket.off("opponent-loses", onOpponentLosesEvent);
     };
   }, [socket]);
 
@@ -44,7 +53,11 @@ const Room = () => {
           <div className="flex flex-col">
             <div>
               <p className="font-medium">{nickname}</p>
-              <MySudokuBoard roomId={roomId} />
+              <MySudokuBoard
+                roomId={roomId}
+                isGameOver={isGameOver}
+                setIsGameOver={setIsGameOver}
+              />
             </div>
           </div>
           <div className="flex flex-col">
@@ -52,6 +65,14 @@ const Room = () => {
             <OpponentSudokuBoard roomId={roomId} />
           </div>
         </div>
+        {isGameOver && (
+          <button
+            className="mt-10 border bg-blue-100 hover:bg-blue-200 hover:cursor-pointer rounded py-1 px-2"
+            onClick={() => navigate("/lobby")}
+          >
+            Back to Lobby
+          </button>
+        )}
       </div>
 
       {(!ready || !opponentReady) && (
