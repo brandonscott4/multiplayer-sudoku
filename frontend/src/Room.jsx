@@ -8,6 +8,7 @@ import { IconLogout2 } from "@tabler/icons-react";
 const Room = () => {
   const roomId = useParams().roomId;
   const nickname = localStorage.getItem("nickname");
+  const [opponentNickname, setOpponentNickname] = useState("Opponent");
   const [ready, setReady] = useState(false);
   const [hasOpponent, setHasOpponent] = useState(false);
   const [opponentReady, setOpponentReady] = useState(false);
@@ -35,8 +36,16 @@ const Room = () => {
     const onOpponentJoinedEvent = () => {
       console.log("Opponent Joined!");
       setHasOpponent(true);
+      socket.emit("opponent-nickname", { roomId });
     };
     socket.on("opponent-joined", onOpponentJoinedEvent);
+
+    const onSelfJoinedEvent = () => {
+      console.log("You joined!");
+      setHasOpponent(true);
+      socket.emit("opponent-nickname", { roomId });
+    };
+    socket.on("self-joined", onSelfJoinedEvent);
 
     const onOpponentLosesEvent = () => {
       setIsGameOver(true);
@@ -56,12 +65,19 @@ const Room = () => {
     };
     socket.on("opponent-left", onOpponentLeftEvent);
 
+    const onOpponentNicknameEvent = ({ oppNickname }) => {
+      setOpponentNickname(oppNickname);
+    };
+    socket.on("opponent-nickname", onOpponentNicknameEvent);
+
     return () => {
       socket.off("ready", onReadyEvent);
       socket.off("opponent-joined", onOpponentJoinedEvent);
+      socket.off("self-joined", onSelfJoinedEvent);
       socket.off("opponent-loses", onOpponentLosesEvent);
       socket.off("opponent-wins", onOpponentWinsEvent);
       socket.off("opponent-left", onOpponentLeftEvent);
+      socket.off("opponent-nickname", onOpponentNicknameEvent);
     };
   }, [socket]);
 
@@ -89,7 +105,7 @@ const Room = () => {
             </div>
           </div>
           <div className="flex flex-col">
-            <p className="font-medium">Nickname</p>
+            <p className="font-medium">{opponentNickname}</p>
             <OpponentSudokuBoard roomId={roomId} />
           </div>
         </div>

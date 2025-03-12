@@ -61,6 +61,7 @@ io.on("connection", (socket) => {
   console.log("A user connected ", socket.id);
 
   socket.on("disconnect", () => {
+    //add clean up...?
     console.log("A user disconnected ", socket.id);
   });
 
@@ -96,10 +97,11 @@ io.on("connection", (socket) => {
     joinRoom(roomName, nickname, socket);
     socket.emit("join-success");
     socket.join(roomName);
+    socket.to(roomName).emit("opponent-joined");
 
     //look for better fix here with potential mounting timing issue
     setTimeout(() => {
-      io.to(roomName).emit("opponent-joined");
+      socket.emit("self-joined");
     }, 500);
 
     console.log("User joined room: ", roomName);
@@ -131,6 +133,19 @@ io.on("connection", (socket) => {
 
   socket.on("leave-room", (data) => {
     leaveRoom(data.roomId, socket);
+  });
+
+  socket.on("opponent-nickname", (data) => {
+    const room = rooms[data.roomId];
+    if (socket.id === room.hostId) {
+      socket.emit("opponent-nickname", { oppNickname: room.guestNickname });
+      return;
+    }
+
+    if (socket.id === room.guestId) {
+      socket.emit("opponent-nickname", { oppNickname: room.hostNickname });
+      return;
+    }
   });
 });
 
