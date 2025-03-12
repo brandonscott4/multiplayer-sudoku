@@ -25,6 +25,35 @@ const joinRoom = (roomName, nickname, socket) => {
   rooms[roomName].playerCount += 1;
   rooms[roomName].guestNickname = nickname;
   rooms[roomName].guestId = socket.id;
+  rooms[roomName].isGameOver = false;
+  console.log(rooms);
+};
+
+const leaveRoom = (roomName, socket) => {
+  const room = rooms[roomName];
+
+  if (room.playerCount === 1) {
+    delete rooms[roomName];
+    socket.leave(roomName);
+    console.log(rooms);
+    return;
+  }
+
+  if (socket.id === room.hostId) {
+    room.hostNickname = room.guestNickname;
+    delete room.guestNickname;
+
+    room.hostId = room.guestId;
+    delete room.guestId;
+  } else if (socket.id === room.guestId) {
+    delete room.guestNickname;
+    delete room.guestId;
+  }
+
+  room.playerCount -= 1;
+  room.isGameOver = true;
+  socket.to(roomName).emit("opponent-left");
+
   console.log(rooms);
 };
 
@@ -59,6 +88,11 @@ io.on("connection", (socket) => {
       return;
     }
 
+    if (rooms[roomName].isGameOver) {
+      socket.emit("join-failure", { failure: "Game is over" });
+      return;
+    }
+
     joinRoom(roomName, nickname, socket);
     socket.emit("join-success");
     socket.join(roomName);
@@ -86,11 +120,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("opponent-loses", (data) => {
+    rooms[data.roomId].isGameOver = true;
     socket.to(data.roomId).emit("opponent-loses");
   });
 
   socket.on("opponent-wins", (data) => {
+    rooms[data.roomId].isGameOver = true;
     socket.to(data.roomId).emit("opponent-wins");
+  });
+
+  socket.on("leave-room", (data) => {
+    leaveRoom(data.roomId, socket);
   });
 });
 

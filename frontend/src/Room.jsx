@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSocket } from "./useSocket";
 import MySudokuBoard from "./MySudokuBoard";
 import OpponentSudokuBoard from "./OpponentSudokuBoard";
+import { IconLogout2 } from "@tabler/icons-react";
 
 const Room = () => {
   const roomId = useParams().roomId;
@@ -18,6 +19,11 @@ const Room = () => {
     const newReady = !ready;
     setReady(newReady);
     socket.emit("ready", { readyStatus: newReady, roomId: roomId });
+  };
+
+  const handleLeaveRoomClick = () => {
+    socket.emit("leave-room", { roomId });
+    navigate("/lobby");
   };
 
   useEffect(() => {
@@ -44,17 +50,33 @@ const Room = () => {
     };
     socket.on("opponent-wins", onOpponentWinsEvent);
 
+    const onOpponentLeftEvent = () => {
+      setIsGameOver(true);
+      alert("Opponent left the room");
+    };
+    socket.on("opponent-left", onOpponentLeftEvent);
+
     return () => {
       socket.off("ready", onReadyEvent);
       socket.off("opponent-joined", onOpponentJoinedEvent);
       socket.off("opponent-loses", onOpponentLosesEvent);
+      socket.off("opponent-wins", onOpponentWinsEvent);
+      socket.off("opponent-left", onOpponentLeftEvent);
     };
   }, [socket]);
 
   return (
     <>
       <div className="flex flex-col justify-center items-center h-full">
-        <h1 className="text-3xl">Room: {roomId}</h1>
+        <div className="flex gap-6">
+          <h1 className="text-3xl">Room: {roomId}</h1>
+          <button
+            className="border bg-yellow-100 p-1 hover:bg-yellow-200 hover:cursor-pointer rounded"
+            onClick={handleLeaveRoomClick}
+          >
+            <IconLogout2 stroke={2} />
+          </button>
+        </div>
         <div className="flex gap-24">
           <div className="flex flex-col">
             <div>
@@ -71,14 +93,7 @@ const Room = () => {
             <OpponentSudokuBoard roomId={roomId} />
           </div>
         </div>
-        {isGameOver && (
-          <button
-            className="mt-10 border bg-blue-100 hover:bg-blue-200 hover:cursor-pointer rounded py-1 px-2"
-            onClick={() => navigate("/lobby")}
-          >
-            Back to Lobby
-          </button>
-        )}
+        {isGameOver && <h2 className="mt-10 text-3xl">Game Over!</h2>}
       </div>
 
       {(!ready || !opponentReady) && (

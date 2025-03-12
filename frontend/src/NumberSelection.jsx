@@ -7,7 +7,9 @@ const NumberSelection = ({ handleCheck, isGameOver }) => {
         <button
           key={num}
           disabled={isGameOver}
-          className="bg-gray-200 hover:bg-gray-300 hover:cursor-pointer rounded"
+          className={`bg-gray-200 hover:bg-gray-300 hover:cursor-pointer rounded ${
+            isGameOver ? "bg-gray-300" : ""
+          }`}
           onClick={() => {
             handleCheck(num);
           }}
