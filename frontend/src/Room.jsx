@@ -120,7 +120,13 @@ const Room = () => {
               className="hover:cursor-pointer rounded"
               onClick={() => handleLeaveRoomClick(true)}
             >
-              <TbLogout2 className="w-6 h-6 hover:text-gray-600" />
+              <TbLogout2
+                className={`w-6 h-6 hover:text-gray-600 ${
+                  isGameOver
+                    ? "animate-pulse text-red-500 hover:text-red-600 hover:animate-none"
+                    : ""
+                }`}
+              />
             </button>
           </div>
           <MySudokuBoard
