@@ -22,9 +22,14 @@ const Room = () => {
     socket.emit("ready", { readyStatus: newReady, roomId: roomId });
   };
 
-  const handleLeaveRoomClick = () => {
-    socket.emit("leave-room", { roomId });
+  const handleLeaveRoomClick = (hasGameStarted) => {
+    socket.emit("leave-room", { roomId, hasGameStarted });
     navigate("/lobby");
+  };
+
+  const handleLeaveRoomClickWaiting = () => {
+    socket.emit("opponent-left-waiting", { roomId });
+    handleLeaveRoomClick(false);
   };
 
   useEffect(() => {
@@ -59,11 +64,23 @@ const Room = () => {
     };
     socket.on("opponent-wins", onOpponentWinsEvent);
 
-    const onOpponentLeftEvent = () => {
-      setIsGameOver(true);
+    const onOpponentLeftEvent = (hasGameStarted) => {
+      console.log("and it is..." + hasGameStarted);
+      if (hasGameStarted) {
+        setIsGameOver(true);
+      }
+
       alert("Opponent left the room");
     };
     socket.on("opponent-left", onOpponentLeftEvent);
+
+    const onOpponentLeftWaitingEvent = () => {
+      setReady(false);
+      setOpponentNickname("Opponent");
+      setHasOpponent(false);
+      setOpponentReady(false);
+    };
+    socket.on("opponent-left-waiting", onOpponentLeftWaitingEvent);
 
     const onOpponentNicknameEvent = ({ oppNickname }) => {
       setOpponentNickname(oppNickname);
@@ -77,6 +94,7 @@ const Room = () => {
       socket.off("opponent-loses", onOpponentLosesEvent);
       socket.off("opponent-wins", onOpponentWinsEvent);
       socket.off("opponent-left", onOpponentLeftEvent);
+      socket.off("opponent-left-waiting", onOpponentLeftWaitingEvent);
       socket.off("opponent-nickname", onOpponentNicknameEvent);
     };
   }, [socket]);
@@ -100,7 +118,7 @@ const Room = () => {
             <p className="font-mono text-2xl">{nickname}</p>
             <button
               className="hover:cursor-pointer rounded"
-              onClick={handleLeaveRoomClick}
+              onClick={() => handleLeaveRoomClick(true)}
             >
               <TbLogout2 className="w-6 h-6 hover:text-gray-600" />
             </button>
@@ -126,9 +144,19 @@ const Room = () => {
         <div className="absolute top-0 left-0 w-full h-full bg-gray-50 z-10">
           <div className="flex justify-center items-center h-full">
             <div className="flex flex-col justify-center items-center bg-white shadow-lg rounded-2xl p-10 border border-gray-200">
-              <p className="mb-8 text-2xl">
-                {!opponentReady ? "Waiting for opponent..." : "Opponent ready!"}
-              </p>
+              <div className="flex gap-3 mb-6">
+                <p className="text-2xl">
+                  {!opponentReady
+                    ? "Waiting for opponent..."
+                    : "Opponent ready!"}
+                </p>
+                <button
+                  className="hover:cursor-pointer rounded"
+                  onClick={handleLeaveRoomClickWaiting}
+                >
+                  <TbLogout2 className="w-6 h-6 hover:text-gray-600" />
+                </button>
+              </div>
               {hasOpponent && (
                 <button
                   className="border bg-green-100 w-32 px-3 py-1 hover:bg-green-200 hover:cursor-pointer rounded"

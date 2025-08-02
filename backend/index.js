@@ -29,7 +29,7 @@ const joinRoom = (roomName, nickname, socket) => {
   console.log(rooms);
 };
 
-const leaveRoom = (roomName, socket) => {
+const leaveRoom = (roomName, hasGameStarted, socket) => {
   const room = rooms[roomName];
 
   if (room.playerCount === 1) {
@@ -51,8 +51,10 @@ const leaveRoom = (roomName, socket) => {
   }
 
   room.playerCount -= 1;
-  room.isGameOver = true;
-  socket.to(roomName).emit("opponent-left");
+  if (hasGameStarted) {
+    room.isGameOver = true;
+  }
+  socket.to(roomName).emit("opponent-left", hasGameStarted);
 
   console.log(rooms);
 };
@@ -132,7 +134,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leave-room", (data) => {
-    leaveRoom(data.roomId, socket);
+    leaveRoom(data.roomId, data.hasGameStarted, socket);
+  });
+
+  socket.on("opponent-left-waiting", (data) => {
+    socket.to(data.roomId).emit("opponent-left-waiting");
   });
 
   socket.on("opponent-nickname", (data) => {
