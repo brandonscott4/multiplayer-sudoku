@@ -123,21 +123,23 @@ const Room = () => {
       {/*isGameOver && <h2 className="mt-10 text-3xl">Game Over!</h2> */}
 
       {(!ready || !opponentReady) && (
-        <div className="absolute top-0 left-0 w-full h-full bg-white z-10">
-          <div className="flex flex-col justify-center items-center h-full">
-            <p className="mb-8 text-2xl">
-              {!opponentReady ? "Waiting for opponent..." : "Opponent ready!"}
-            </p>
-            {hasOpponent && (
-              <button
-                className="border bg-green-100 w-32 px-3 py-1 hover:bg-green-200 hover:cursor-pointer rounded"
-                onClick={() => {
-                  handleClick();
-                }}
-              >
-                {ready ? "Unready" : "Ready"}
-              </button>
-            )}
+        <div className="absolute top-0 left-0 w-full h-full bg-gray-50 z-10">
+          <div className="flex justify-center items-center h-full">
+            <div className="flex flex-col justify-center items-center bg-white shadow-lg rounded-2xl p-10 border border-gray-200">
+              <p className="mb-8 text-2xl">
+                {!opponentReady ? "Waiting for opponent..." : "Opponent ready!"}
+              </p>
+              {hasOpponent && (
+                <button
+                  className="border bg-green-100 w-32 px-3 py-1 hover:bg-green-200 hover:cursor-pointer rounded"
+                  onClick={() => {
+                    handleClick();
+                  }}
+                >
+                  {ready ? "Unready" : "Ready"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

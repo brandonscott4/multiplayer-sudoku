@@ -57,8 +57,8 @@ const Lobby = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center h-screen">
-        <div className="flex flex-col border p-6 rounded">
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <div className="flex flex-col bg-white shadow-lg rounded-2xl p-10 border border-gray-200">
           <h1 className="font-medium text-xl mb-8 text-center">Lobby</h1>
           <div className="flex flex-col gap-12">
             <div>
