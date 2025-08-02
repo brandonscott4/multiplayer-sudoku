@@ -100,37 +100,45 @@ const MySudokuBoard = ({ roomId, isGameOver, setIsGameOver }) => {
 
   return (
     <>
-      <p>Lives: {lives}</p>
       <div className="flex gap-12">
-        <div className="border-2">
-          <div className="grid grid-cols-9 grid-rows-9">
-            {board.map((row, rowIndex) =>
-              row.map((num, colIndex) => (
-                <button
-                  className={`border ${
-                    activeCell.rowIndex === rowIndex &&
-                    activeCell.colIndex === colIndex
-                      ? "bg-blue-100"
-                      : "bg-white"
-                  } ${
-                    colIndex === 2 || colIndex === 5
-                      ? "border-r-2 border-r-black"
-                      : ""
-                  } ${
-                    rowIndex === 2 || rowIndex === 5
-                      ? "border-b-2 border-b-black"
-                      : ""
-                  } border-gray-200 w-12 h-12 hover:cursor-pointer text-gray-700 text-3xl`}
-                  key={rowIndex + colIndex}
-                  onClick={() => handleClick(rowIndex, colIndex)}
-                >
-                  {num === 0 ? " " : num}
-                </button>
-              ))
-            )}
+        <div className="bg-white shadow-lg rounded-2xl p-10 border border-gray-200">
+          <div className="border-2">
+            <div className="grid grid-cols-9 grid-rows-9">
+              {board.map((row, rowIndex) =>
+                row.map((num, colIndex) => (
+                  <button
+                    className={`border ${
+                      activeCell.rowIndex === rowIndex &&
+                      activeCell.colIndex === colIndex
+                        ? "bg-blue-100"
+                        : "bg-white"
+                    } ${
+                      colIndex === 2 || colIndex === 5
+                        ? "border-r-2 border-r-black"
+                        : ""
+                    } ${
+                      rowIndex === 2 || rowIndex === 5
+                        ? "border-b-2 border-b-black"
+                        : ""
+                    } border-gray-200 w-12 h-12 hover:cursor-pointer text-gray-700 text-3xl`}
+                    key={rowIndex + colIndex}
+                    onClick={() => handleClick(rowIndex, colIndex)}
+                  >
+                    {num === 0 ? " " : num}
+                  </button>
+                ))
+              )}
+            </div>
           </div>
         </div>
-        <NumberSelection handleCheck={handleCheck} isGameOver={isGameOver} />
+        <div>
+          <div className="bg-white shadow-lg rounded-2xl p-4 border border-gray-200 mb-4">
+            <p className="border border-red-200 bg-red-100 rounded text-center py-1 font-mono">
+              Lives: {lives}
+            </p>
+          </div>
+          <NumberSelection handleCheck={handleCheck} isGameOver={isGameOver} />
+        </div>
       </div>
     </>
   );

@@ -83,7 +83,8 @@ const Room = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center h-full">
+      <div className="flex h-screen divide-x-2 divide-gray-200 bg-gray-50">
+        {/*
         <div className="flex gap-6">
           <h1 className="text-3xl">Room: {roomId}</h1>
           <button
@@ -93,24 +94,33 @@ const Room = () => {
             <IconLogout2 stroke={2} />
           </button>
         </div>
-        <div className="flex gap-24">
-          <div className="flex flex-col">
-            <div>
-              <p className="font-medium">{nickname}</p>
-              <MySudokuBoard
-                roomId={roomId}
-                isGameOver={isGameOver}
-                setIsGameOver={setIsGameOver}
-              />
-            </div>
+        */}
+        <div className="w-1/2 flex flex-col justify-center items-center">
+          <div className="flex items-center gap-3 mb-6">
+            <p className="font-mono text-2xl">{nickname}</p>
+            <button
+              className="hover:cursor-pointer rounded"
+              onClick={handleLeaveRoomClick}
+            >
+              <IconLogout2 className="w-6 h-6 hover:text-gray-600" />
+            </button>
           </div>
-          <div className="flex flex-col">
-            <p className="font-medium">{opponentNickname}</p>
-            <OpponentSudokuBoard roomId={roomId} />
-          </div>
+          <MySudokuBoard
+            roomId={roomId}
+            isGameOver={isGameOver}
+            setIsGameOver={setIsGameOver}
+            nickname={nickname}
+          />
         </div>
-        {isGameOver && <h2 className="mt-10 text-3xl">Game Over!</h2>}
+        <div className="w-1/2 flex flex-col justify-center items-center">
+          <p className="font-mono text-2xl mb-6">{opponentNickname}</p>
+          <OpponentSudokuBoard
+            isActive={ready && opponentReady}
+            isGameOver={isGameOver}
+          />
+        </div>
       </div>
+      {/*isGameOver && <h2 className="mt-10 text-3xl">Game Over!</h2> */}
 
       {(!ready || !opponentReady) && (
         <div className="absolute top-0 left-0 w-full h-full bg-white z-10">

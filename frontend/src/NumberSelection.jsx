@@ -2,7 +2,7 @@ const NumberSelection = ({ handleCheck, isGameOver }) => {
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   return (
-    <div className="grid grid-rows-3 grid-cols-3 gap-3 w-52 h-52">
+    <div className="grid grid-rows-3 grid-cols-3 gap-3 w-60 h-60 bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
       {numbers.map((num) => (
         <button
           key={num}
