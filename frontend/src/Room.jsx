@@ -65,7 +65,6 @@ const Room = () => {
     socket.on("opponent-wins", onOpponentWinsEvent);
 
     const onOpponentLeftEvent = (hasGameStarted) => {
-      console.log("and it is..." + hasGameStarted);
       if (hasGameStarted) {
         setIsGameOver(true);
       }
