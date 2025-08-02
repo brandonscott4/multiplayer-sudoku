@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useSocket } from "./useSocket";
 import MySudokuBoard from "./MySudokuBoard";
 import OpponentSudokuBoard from "./OpponentSudokuBoard";
-import { IconLogout2 } from "@tabler/icons-react";
+import { TbLogout2 } from "react-icons/tb";
 
 const Room = () => {
   const roomId = useParams().roomId;
@@ -102,7 +102,7 @@ const Room = () => {
               className="hover:cursor-pointer rounded"
               onClick={handleLeaveRoomClick}
             >
-              <IconLogout2 className="w-6 h-6 hover:text-gray-600" />
+              <TbLogout2 className="w-6 h-6 hover:text-gray-600" />
             </button>
           </div>
           <MySudokuBoard
